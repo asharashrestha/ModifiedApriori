@@ -13,10 +13,8 @@ from functools import wraps
 from time import time
 import pandas as pd
 import numpy as np
-import re
-import itertools
 
-
+file_path = "/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project"
 start = datetime.datetime.now()
 print("Started at: ", start)
 global freqSet
@@ -78,9 +76,11 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet, all
                     if isConsecutive(lst):
                         for transaction in transactionList:
                             countNumberofTrnsactions+=1
+
                             if subset_in_order(item, transaction):
-                                    freqSet[item] += 1
-                                    localSet[item] += 1
+                                item = tuple(sorted(item))
+                                freqSet[item] += 1
+                                localSet[item] += 1
 
 
         print("Number of times it checks transaction: ", countNumberofTrnsactions)
@@ -97,6 +97,7 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet, all
 @timing
 def subset_in_order(sub,lst):
     j = iter(lst)
+    sub = sorted(sub)
     for i in sub:
         while True:
             try:
@@ -263,19 +264,15 @@ def runApriori(data_iter, minSupport, minConfidence, allowGaps):
     for tup in toRetItems:
         if len(tup) != 1:
             # tup = sortedList(tup)
-            _subsets = subsets(tup)
-            _subsets = list(_subsets)
+            tup = tuple(sorted(tup))
+            i = tup[:len(tup)-1]
+            j = tup[len(tup)-1:]
 
-            for i in _subsets:
-                for j in _subsets:
-                    # if isConsecutive([i, j]) and isLessThan(tuple(x.split("_")[-1] for x in i),
-                    #                                         tuple(x.split("_")[-1] for x in j)):
-                    if isLessThan(tuple(x.split("_")[0] for x in i),
-                                                                tuple(x.split("_")[0] for x in j)):
-                        _rulesSet.add((i, j))
+            _rulesSet.add((i, j))
     print("Number of Rules:", len(_rulesSet))
 
     for item in _rulesSet:
+        confidence = 0
         # a = getSupport(element for tupl in item for element in tupl)
         a = getSupport(item[0] + item[1])
         b = getSupport(item[0])
@@ -315,7 +312,8 @@ start = datetime.datetime.now()
 print("Started at: ", start)
 
 # inFile = dataFromFile('Adm_ICD_Proc.csv')
-inFile = dataFromFile('txn_1.csv')
+file = file_path + '/txn_1.csv'
+inFile = dataFromFile(file)
 # runApriori(inFile,  0.0001, 0.0001, 1) #Params: FileName, minsupport, minconfidence, allowgaps(1,0)
 runApriori(inFile,  0.0001, 0.0001, 0)
 # runApriori(inFile,  0,0)

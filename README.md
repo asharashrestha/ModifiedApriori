@@ -1,2 +1,2 @@
 # ModifiedApriori
-Modified Apriori for sequential events
+Modified Apriori for sequentially ordered events

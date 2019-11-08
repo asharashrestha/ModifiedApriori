@@ -1,0 +1,29 @@
+Disposition, Description
+0,Unknown value (but present in data)
+1,Discharged to home/self care
+2,Discharged / transferred to short term hospital
+3,Discharged / transferred to SNF
+4,Discharged / transferred to intermediate care
+5,Discharged / transferred to other IPT care
+6,Discharged / transferred to HHA home care
+7,Left against medical advice or discontinue care
+8,Discharged / transferred to home IV drug care
+9,Admitted as an inpatient to hospital after OPT
+20,Expired (did not recover - Christian Science)
+21,Discharged / transferred to court /law enforce
+30,Still a patient
+40,Expired at home (hospice claims only)
+41,Expired in facility (hospice claims only)
+42,Expired place unknown (hospice claims only)
+43,Discharged / transferred to federal hospital
+50,Hospice - home
+51,Hospice - medical facility
+61,Discharged / transferred to swing bed internally
+62,Discharged / transferred to IPT Rehab
+63,Discharged / transferred to to LTC
+64,Discharged / transferred to Medicaid facility
+65,Discharged / transferred to Psychiatric Hospital
+66,Discharged / transferred to CAH
+70,Discharged / transferred to other misc facility
+71,Discharged / transferred to other OPT services
+72,Discharged / transferred internally for OPT svcs

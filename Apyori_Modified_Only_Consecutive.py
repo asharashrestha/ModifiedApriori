@@ -18,7 +18,7 @@ start = datetime.datetime.now()
 print("Started at: ", start)
 
 methodTimeLog = dict()
-
+groupwise_rules_dict = dict()
 def timing(f):
     @wraps(f)
     def wrapper(*args, **kwargs):
@@ -43,6 +43,13 @@ def subsets(arr):
 
 @timing
 def isConsecutive(l):
+    if len(l) == 1:
+        return False
+    if "_" in str(l[0]):
+        lst = []
+        for i in l:
+            lst.append(int(i.split("_")[0]))
+        l = lst
     n = len(l) - 1
     return (sum(np.diff(sorted(l)) == 1) >= n)
 
@@ -61,11 +68,13 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
                     lst.append(int(i.split("_")[0]))
                 if isConsecutive(lst):
                     for transaction in transactionList:
+                        groupwise_rules_dict[frozenset(transaction)] = [x for x in subsets(transaction) if isConsecutive(list(x))]
                         countNumberofTrnsactions+=1
                         if item.issubset(transaction):
                                 freqSet[item] += 1
                                 localSet[item] += 1
             else:
+                # print("Total Number of unique items are: ", len(itemSet))
                 for transaction in transactionList:
                     countNumberofTrnsactions += 1
                     if item.issubset(transaction):
@@ -169,13 +178,21 @@ def runApriori(data_iter, minSupport, minConfidence):
 @timing
 def printRules(rules):
     count = 0
+    df_rules = pd.DataFrame(columns=['LHS', 'RHS', 'Conf'])
+
     for ind, val in enumerate(sorted(rules, key = lambda tup: (-tup[1]))): #sort rules by confidence
         lhs_rhs, conf = val
         # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
         lhs, rhs = lhs_rhs
         count+=1
         print(lhs, '->', rhs, ":", conf)
-        # print(lhs[0], '->', rhs[0], ":", conf)
+        if len(lhs) == 1:
+            df_rules = df_rules.append({'LHS': str(lhs[0]), 'RHS': str(rhs[0]), 'Conf': str(conf)}, ignore_index=True)
+
+        else:
+            df_rules = df_rules.append({'LHS': str(sorted(lhs)), 'RHS': str(rhs[0]), 'Conf': str(conf)}, ignore_index=True)
+
+    df_rules.to_csv('Rules.csv')
     print("Number of Rules: ", count)
 
 
@@ -192,16 +209,61 @@ def dataFromFile(fname):
                 val = str(key + 1) + "_" + val
                 recordWithTag.append(val)
         yield recordWithTag
+@timing
+def printMyRules(rules,fname):
+
+    """Function which reads from the file and yields a generator"""
+    my_dict = defaultdict(list)
+    # fname = filepath + 'txn_1.csv'
+
+    file_iter = open(fname)
+    for line in file_iter:
+        line = line.strip().rstrip(',')
+        record = (line.split(','))
+        recordWithTag = []  # new list after tag is added
+        for key, val in enumerate(record):
+            if val != "":
+                val = str(key + 1) + "_" + val
+                recordWithTag.append(val)
+        a = recordWithTag
+
+        my_set = frozenset()
+        for j in rules:
+            b = ()
+            for i in j[0]: #converting list of tuple of list of string
+                b+=i
+            my_set = frozenset(b)
+            my_trans = frozenset(a)
+
+            if my_set.issubset(my_trans):
+                my_dict[my_trans].append(my_set)
+
+
+        # yield recordWithTag
+
+    count = 0
+    for ind, val in enumerate(sorted(rules, key=lambda tup: (-tup[1]))):  # sort rules by confidence
+        lhs_rhs, conf = val
+        # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
+        lhs, rhs = lhs_rhs
+        count += 1
+        print(lhs, '->', rhs, ":", conf)
+        # print(lhs[0], '->', rhs[0], ":", conf)
+    print("Number of Rules: ", count)
+
 
 
 start = datetime.datetime.now()
 print("Started at: ", start)
 
 # inFile = dataFromFile('Adm_ICD_Proc.csv')
-inFile = dataFromFile('txn_1.csv')
-items, rules = runApriori(inFile,  0.0001, 0.0001)
+# filepath = "/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/"
+inFile = dataFromFile("/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/d5k_preprocessed.csv")
+# inFile = dataFromFile(filepath + 'txn_1.csv')
+items, rules = runApriori(inFile,  0.01, 0.01)
 
 printRules(rules)
+# printMyRules(rules, 'txn_1.csv')
 
 finish = datetime.datetime.now()
 print("Finished at: ", finish)

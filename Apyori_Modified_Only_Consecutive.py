@@ -45,11 +45,9 @@ def subsets(arr):
 def isConsecutive(l):
     if len(l) == 1:
         return False
-    if "_" in str(l[0]):
-        lst = []
-        for i in l:
-            lst.append(int(i.split("_")[0]))
-        l = lst
+    # if "_" in str(l[0]):
+    #     lst = [int(i.split("_")[0]) for i in l]
+    #     l = lst
     n = len(l) - 1
     return (sum(np.diff(sorted(l)) == 1) >= n)
 
@@ -68,7 +66,7 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
                     lst.append(int(i.split("_")[0]))
                 if isConsecutive(lst):
                     for transaction in transactionList:
-                        groupwise_rules_dict[frozenset(transaction)] = [x for x in subsets(transaction) if isConsecutive(list(x))]
+                        # groupwise_rules_dict[frozenset(transaction)] = [x for x in subsets(transaction) if isConsecutive(list(x))]
                         countNumberofTrnsactions+=1
                         if item.issubset(transaction):
                                 freqSet[item] += 1
@@ -244,23 +242,20 @@ def printMyRules(rules,fname):
     count = 0
     for ind, val in enumerate(sorted(rules, key=lambda tup: (-tup[1]))):  # sort rules by confidence
         lhs_rhs, conf = val
-        # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
         lhs, rhs = lhs_rhs
         count += 1
         print(lhs, '->', rhs, ":", conf)
-        # print(lhs[0], '->', rhs[0], ":", conf)
     print("Number of Rules: ", count)
-
-
 
 start = datetime.datetime.now()
 print("Started at: ", start)
 
 # inFile = dataFromFile('Adm_ICD_Proc.csv')
-# filepath = "/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/"
-inFile = dataFromFile("/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/d5k_preprocessed.csv")
-# inFile = dataFromFile(filepath + 'txn_1.csv')
-items, rules = runApriori(inFile,  0.01, 0.01)
+filepath = "/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/"
+file = "Project/VersionControl/ModifiedApriori/d5k_preprocessed.csv"
+inFile = dataFromFile(filepath + file)
+# infile
+items, rules = runApriori(inFile,  0.0001, 0.0001)
 
 printRules(rules)
 # printMyRules(rules, 'txn_1.csv')

@@ -12,6 +12,7 @@ import time
 from functools import wraps
 from time import time
 import pandas as pd
+import numpy as np
 
 start = datetime.datetime.now()
 print("Started at: ", start)
@@ -39,6 +40,18 @@ def timing(f):
 def subsets(arr):
     """ Returns non empty subsets of arr"""
     return chain(*[combinations(arr, i + 1) for i, a in enumerate(arr)])
+
+@timing
+def isConsecutive(l):
+    if len(l) == 1:
+        return False
+    if "_" in str(l[0]):
+        lst = []
+        for i in l:
+            lst.append(int(i.split("_")[0]))
+        l = lst
+    n = len(l) - 1
+    return (sum(np.diff(sorted(l)) == 1) >= n)
 
 @timing
 def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
@@ -159,14 +172,28 @@ def runApriori(data_iter, minSupport, minConfidence):
 @timing
 def printRules(rules):
     count = 0
+    filter_count = 0
     for ind, val in enumerate(sorted(rules, key = lambda tup: (-tup[1]))): #sort rules by confidence
         lhs_rhs, conf = val
         # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
         lhs, rhs = lhs_rhs
+
         count+=1
-        print(lhs, '->', rhs, ":", conf)
-        # print(lhs[0], '->', rhs[0], ":", conf)
-    print("Number of Rules: ", count)
+        tag_list = []
+        tag_list.append(int(rhs[0].split("_")[0]))
+
+        for i in lhs:
+            tag_list.append(int(i.split("_")[0]))
+        #Filtering Rules so that no gaps are allowed between orders. And constraining RHS to only one element.
+        if isConsecutive(tag_list):
+            if len(rhs) == 1:
+                if all(int(rhs[0].split("_")[0]) > int(i.split("_")[0]) for i in lhs):
+                    print(lhs, '->', rhs, ":", conf)
+                    filter_count+=1
+        print(lhs[0], '->', rhs[0], ":", conf)
+    print("Number of Rules without filter: ", count)
+
+    print("Number of Rules after filter: ",filter_count)
 
 # @timing
 # def dataFromFile(fname):
@@ -202,7 +229,7 @@ start = datetime.datetime.now()
 print("Started at: ", start)
 
 # inFile = dataFromFile('Adm_ICD_Proc.csv')
-inFile = dataFromFile('txn_1.csv')
+inFile = dataFromFile('/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/d5k_preprocessed.csv')
 items, rules = runApriori(inFile,  0.0001, 0.0001)
 
 printRules(rules)

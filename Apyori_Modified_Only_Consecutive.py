@@ -14,6 +14,8 @@ from time import time
 import pandas as pd
 import numpy as np
 
+t0= time()
+
 start = datetime.datetime.now()
 print("Started at: ", start)
 
@@ -183,7 +185,7 @@ def printRules(rules):
         # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
         lhs, rhs = lhs_rhs
         count+=1
-        print(lhs, '->', rhs, ":", conf)
+        print(lhs[0], '->', rhs[0], ":", conf)
         if len(lhs) == 1:
             df_rules = df_rules.append({'LHS': str(lhs[0]), 'RHS': str(rhs[0]), 'Conf': str(conf)}, ignore_index=True)
 
@@ -191,7 +193,10 @@ def printRules(rules):
             df_rules = df_rules.append({'LHS': str(sorted(lhs)), 'RHS': str(rhs[0]), 'Conf': str(conf)}, ignore_index=True)
 
     df_rules.to_csv('Rules.csv')
+    df = df_rules
+    df.to_csv('Rules.csv')
     print("Number of Rules: ", count)
+    df_rules.to_csv('ashara.csv')
 
 
 @timing
@@ -250,22 +255,23 @@ def printMyRules(rules,fname):
 start = datetime.datetime.now()
 print("Started at: ", start)
 
-# inFile = dataFromFile('Adm_ICD_Proc.csv')
+# filepath = '/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/test.csv'
 filepath = "/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/"
-file = "Project/VersionControl/ModifiedApriori/d5k_preprocessed.csv"
+file = "Project/Data/ScenarioA.csv"
+df = pd.read_csv(filepath + file)
+print(df.nunique())
+
+
+# inFile = dataFromFile(filepath)
+
 inFile = dataFromFile(filepath + file)
 # infile
-items, rules = runApriori(inFile,  0.0001, 0.0001)
+items, rules = runApriori(inFile, 0.0001, 0)
 
 printRules(rules)
 # printMyRules(rules, 'txn_1.csv')
 
-finish = datetime.datetime.now()
-print("Finished at: ", finish)
-
-time_taken = (finish - start)
-
 df = pd.DataFrame(methodTimeLog.items(), columns=["Method", "Time Taken"])
 print(df)
-print("Time taken in seconds: ", time_taken.seconds)
-print("Time taken in hours: ", time_taken.days)
+
+print("Training time:", round(time()-t0, 3), "s")

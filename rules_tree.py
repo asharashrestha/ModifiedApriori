@@ -1,5 +1,8 @@
 import pandas as pd
 from treelib import Node, Tree
+from time import time
+
+t0 = time()
 
 df_rules = pd.read_csv("/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/Rules.csv", dtype=str)
 
@@ -40,4 +43,6 @@ for index, row in df_rules.iterrows():
                 my_queue.append(left + ", " + right)
 
     tree.show(line_type="ascii-em")
+
+print("Tree Generation Time:", round(time()-t0, 3), "s")
 

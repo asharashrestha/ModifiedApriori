@@ -13,6 +13,7 @@ from functools import wraps
 from time import time
 import pandas as pd
 import numpy as np
+t0 = time()
 
 start = datetime.datetime.now()
 print("Started at: ", start)
@@ -190,7 +191,7 @@ def printRules(rules):
                 if all(int(rhs[0].split("_")[0]) > int(i.split("_")[0]) for i in lhs):
                     print(lhs, '->', rhs, ":", conf)
                     filter_count+=1
-        print(lhs[0], '->', rhs[0], ":", conf)
+        # print(lhs[0], '->', rhs[0], ":", conf) #print rules without filter
     print("Number of Rules without filter: ", count)
 
     print("Number of Rules after filter: ",filter_count)
@@ -229,8 +230,10 @@ start = datetime.datetime.now()
 print("Started at: ", start)
 
 # inFile = dataFromFile('Adm_ICD_Proc.csv')
-inFile = dataFromFile('/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/d5k_preprocessed.csv')
-items, rules = runApriori(inFile,  0.0001, 0.0001)
+# inFile = dataFromFile("/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/test.csv")
+
+inFile = dataFromFile('/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/Data/ScenarioA.csv')
+items, rules = runApriori(inFile,  0.01, 0)
 
 printRules(rules)
 
@@ -241,6 +244,8 @@ time_taken = (finish - start)
 
 df = pd.DataFrame(methodTimeLog.items(), columns=["Method", "Time Taken"])
 print(df)
+
+print("Training time:", round(time()-t0, 3), "s")
 print("Time taken in seconds: ", time_taken.seconds)
 print("Time taken in hours: ", time_taken.days)
 

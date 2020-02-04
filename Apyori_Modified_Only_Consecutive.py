@@ -256,17 +256,19 @@ start = datetime.datetime.now()
 print("Started at: ", start)
 
 # filepath = '/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/test.csv'
-filepath = "/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/"
-file = "Project/Data/ScenarioA.csv"
-df = pd.read_csv(filepath + file)
+filepath = "/Users/ashara/Documents/Data/Scenario1_Top10CCS.csv"
+#scenario 2
+# filepath = "/Users/ashara/Documents/Data/scenario2_fullData.csv"
+df = pd.read_csv(filepath)
+print("Total Number of Records: ", len(df))
 print(df.nunique())
 
 
 # inFile = dataFromFile(filepath)
 
-inFile = dataFromFile(filepath + file)
+inFile = dataFromFile(filepath)
 # infile
-items, rules = runApriori(inFile, 0.0001, 0)
+items, rules = runApriori(inFile, 0.01, 0)
 
 printRules(rules)
 # printMyRules(rules, 'txn_1.csv')

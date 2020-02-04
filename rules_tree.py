@@ -8,7 +8,7 @@ t0 = time()
 start = datetime.datetime.now()
 print("Started at: ", start)
 
-df_rules = pd.read_csv("/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/Rules.csv", dtype=str)
+df_rules = pd.read_csv("Rules.csv", dtype=str)
 
 df_rules['LHS'] = df_rules.LHS.str.replace('[', '')
 df_rules['LHS'] = df_rules.LHS.str.replace(']', '')

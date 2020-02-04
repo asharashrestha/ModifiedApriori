@@ -229,11 +229,10 @@ def dataFromFile(fname):
 start = datetime.datetime.now()
 print("Started at: ", start)
 
-# inFile = dataFromFile('Adm_ICD_Proc.csv')
 # inFile = dataFromFile("/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/test.csv")
 
-inFile = dataFromFile('/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/Data/ScenarioA.csv')
-items, rules = runApriori(inFile,  0.01, 0)
+inFile = dataFromFile('/Users/ashara/Documents/Data/scenario2_fullData.csv')
+items, rules = runApriori(inFile, 0.01, 0)
 
 printRules(rules)
 
@@ -260,3 +259,19 @@ print("Time taken in hours: ", time_taken.days)
 #         break
 
 # filterRules(rules)
+
+# import pyfpgrowth
+#
+# transactions = [[1, 2, 5],
+#                 [2, 4],
+#                 [2, 3],
+#                 [1, 2, 4],
+#                 [1, 3],
+#                 [2, 3],
+#                 [1, 3],
+#                 [1, 2, 3, 5],
+#                 [1, 2, 3]]
+#
+# patterns = pyfpgrowth.find_frequent_patterns(transactions, 2)
+# rules = pyfpgrowth.generate_association_rules(patterns, 0.7)
+# print(rules)

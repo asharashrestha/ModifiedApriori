@@ -185,7 +185,9 @@ def printRules(rules):
         # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
         lhs, rhs = lhs_rhs
         count+=1
-        print(lhs[0], '->', rhs[0], ":", conf)
+        conf = round(conf,3)
+        print(lhs, '->', rhs, ":", conf)
+
         if len(lhs) == 1:
             df_rules = df_rules.append({'LHS': str(lhs[0]), 'RHS': str(rhs[0]), 'Conf': str(conf)}, ignore_index=True)
 
@@ -256,6 +258,7 @@ start = datetime.datetime.now()
 print("Started at: ", start)
 
 # filepath = '/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/test.csv'
+#scenario 1
 filepath = "/Users/ashara/Documents/Data/Scenario1_Top10CCS.csv"
 #scenario 2
 # filepath = "/Users/ashara/Documents/Data/scenario2_fullData.csv"

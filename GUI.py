@@ -23,6 +23,7 @@ class SampleApp(tk.Tk):
         b3 = tk.Button(self, text="Primary DX", width=12, command=lambda: self.changeOption(DXChoices))
         b4 = tk.Button(self, text="HAC Septicemia", width=12, command=lambda: self.changeOption(HACChoices))
         b5 = tk.Button(self, text="Show Rules", width=12, command=self.createRulesTree)
+        # l1 = tk.Label(self, text="", command=self.showTree())
 
         self.om = tk.OptionMenu(self, self.om_variable, *ageChoices)
         self.om.configure(width=20)
@@ -57,7 +58,6 @@ class SampleApp(tk.Tk):
 
         # filter df for LHS with the argument given by user.
         if self.filter != None:
-            df_rules = df_rules[df_rules['LHS'].str.contains(self.filter)]
             df_rules = df_rules[df_rules['LHS'].str.contains(self.filter)]
 
         for index, row in df_rules.iterrows():
@@ -102,8 +102,9 @@ class SampleApp(tk.Tk):
             contents = f.read()
             text += contents
         txt = tk.Label(text=text, justify="left")
+        # return txt
         f.close()
-        txt.pack()
+        txt.pack(side="bottom")
 
     def _reset_option_menu(self, options, index=None):
         '''reset the values in the option menu
@@ -128,7 +129,6 @@ class SampleApp(tk.Tk):
         choices = list(set(df.AGE_GROUP.unique()))
         return choices
 
-
     def use_LOS(self):
         '''Switch the option menu to display LOS'''
         filepath = "/Users/ashara/Documents/Data/Scenario1_Top10CCS.csv"
@@ -137,14 +137,14 @@ class SampleApp(tk.Tk):
         return choices
 
     def use_DX(self):
-        '''Switch the option menu to display LOS'''
+        '''Switch the option menu to display Primary Dx'''
         filepath = "/Users/ashara/Documents/Data/Scenario1_Top10CCS.csv"
         df = pd.read_csv(filepath)
         choices = list(set(df.PRIMARY_DX.unique()))
         return choices
 
     def use_HAC(self):
-        '''Switch the option menu to display LOS'''
+        '''Switch the option menu to display HAC'''
         filepath = "/Users/ashara/Documents/Data/Scenario1_Top10CCS.csv"
         df = pd.read_csv(filepath)
         choices = list(set(df.DEVELOPED_SEPTICEMIA.unique()))
@@ -153,4 +153,5 @@ class SampleApp(tk.Tk):
 
 if __name__ == "__main__":
     app = SampleApp()
+    app.title("Show Rules Tree")
     app.mainloop()

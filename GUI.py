@@ -18,6 +18,10 @@ class SampleApp(tk.Tk):
         self.om_variable.trace("w", self.setfilter)
         self.filter = None
 
+        # self.vsb = tk.Scrollbar(self.master, orient="vertical", command=self.canvas.yview)
+        # self.canvas.configure(yscrollcommand=self.vsb.set)
+        # self.vsb.pack(side="right", fill="y")
+
         b1 = tk.Button(self, text="Age", width=12, command=lambda: self.changeOption(ageChoices))
         b2 = tk.Button(self, text="LOS", width=12, command=lambda: self.changeOption(LOSChoices))
         b3 = tk.Button(self, text="Primary DX", width=12, command=lambda: self.changeOption(DXChoices))
@@ -28,12 +32,12 @@ class SampleApp(tk.Tk):
         self.om = tk.OptionMenu(self, self.om_variable, *ageChoices)
         self.om.configure(width=20)
 
-        b1.pack(side="left")
-        b2.pack(side="left")
-        b3.pack(side="left")
-        b4.pack(side="left")
-        b5.pack(side="left")
-        self.om.pack(side="left", fill="x", expand=True)
+        b1.grid(row=0,column=1,columnspan=1)#pack(side="left")
+        b2.grid(row=0,column=2,columnspan=1)#.pack(side="left")
+        b3.grid(row=0,column=3,columnspan=1)#.pack(side="left")
+        b4.grid(row=0,column=4,columnspan=1)#.pack(side="left")
+        b5.grid(row=0,column=5,columnspan=1)#.pack(side="left")
+        self.om.grid(row=0,column=6,columnspan=1)#pack(side="left")
 
     def changeOption(self,choices):
         self._reset_option_menu(choices, 0)
@@ -101,10 +105,13 @@ class SampleApp(tk.Tk):
         for i in range(10):
             contents = f.read()
             text += contents
-        txt = tk.Label(text=text, justify="left")
+
+        text = text
+        txt = tk.Label(self,text=text,justify="left")
+        txt.grid(columnspan = 6)
         # return txt
         f.close()
-        txt.pack(side="bottom")
+        # txt.pack(side = tk.BOTTOM)
 
     def _reset_option_menu(self, options, index=None):
         '''reset the values in the option menu

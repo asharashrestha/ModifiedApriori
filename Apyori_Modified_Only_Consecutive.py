@@ -193,7 +193,7 @@ def dataFromFile(fname):
         record = (line.split(','))
         recordWithTag = []  # new list after tag is added
         for key, val in enumerate(record):
-            if val !="":
+            if val.strip() !="":
                 val = str(key + 1) + "_" + val
                 recordWithTag.append(val)
         yield recordWithTag

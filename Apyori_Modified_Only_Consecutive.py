@@ -1,10 +1,3 @@
-"""
-Description     : Simple Python implementation of the Apriori Algorithm
-Usage:
-    $python apriori.py -f DATASET.csv -s minSupport  -c minConfidence
-    $python apriori.py -f DATASET.csv -s 0.15 -c 0.6
-"""
-
 import datetime
 from itertools import chain, combinations
 from collections import defaultdict
@@ -47,9 +40,6 @@ def subsets(arr):
 def isConsecutive(l):
     if len(l) == 1:
         return False
-    # if "_" in str(l[0]):
-    #     lst = [int(i.split("_")[0]) for i in l]
-    #     l = lst
     n = len(l) - 1
     return (sum(np.diff(sorted(l)) == 1) >= n)
 
@@ -74,13 +64,11 @@ def returnItemsWithMinSupport(itemSet, transactionList, minSupport, freqSet):
                                 freqSet[item] += 1
                                 localSet[item] += 1
             else:
-                # print("Total Number of unique items are: ", len(itemSet))
                 for transaction in transactionList:
                     countNumberofTrnsactions += 1
                     if item.issubset(transaction):
                         freqSet[item] += 1
                         localSet[item] += 1
-
 
         print("Number of times it checks transaction: ", countNumberofTrnsactions)
         for item, count in localSet.items():
@@ -114,21 +102,11 @@ def getItemSetTransactionList(data_iterator):
 
 @timing
 def runApriori(data_iter, minSupport, minConfidence):
-    """
-    run the apriori algorithm. data_iter is a record iterator
-    Return both:
-     - items (tuple, support)
-     - rules ((pretuple, posttuple), confidence)
-    """
     itemSet, transactionList = getItemSetTransactionList(data_iter)
 
     freqSet = defaultdict(int)
     largeSet = dict()
-    # Global dictionary which stores (key=n-itemSets,value=support)
-    # which satisfy minSupport
-
-    assocRules = dict()
-    # Dictionary which stores Association Rules
+    # Global dictionary which stores (key=n-itemSets,value=support) which satisfy minSupport
 
     oneCSet = returnItemsWithMinSupport(itemSet,
                                         transactionList,
@@ -159,9 +137,13 @@ def runApriori(data_iter, minSupport, minConfidence):
                            for item in value])
 
     toRetRules = []
+    num_frequent_pattern = 0
     for key, value in list(largeSet.items())[1:]:
+        num_frequent_pattern+= len(value)
         for item in value:
-            item = sorted(list(item))
+            # item = sorted(list(item))
+            item = list(item)
+            item.sort(key=lambda x: int(x.split("_")[0]))
             a = item[:len(item)-1]
             b = item[len(item)-1:]
 
@@ -172,6 +154,7 @@ def runApriori(data_iter, minSupport, minConfidence):
             if confidence >= minConfidence:
                 toRetRules.append(((tuple(a), tuple(b)),
                                    confidence))
+    print("Number of frequent patterns: ", num_frequent_pattern)
     return toRetItems, toRetRules
 
 
@@ -182,9 +165,9 @@ def printRules(rules):
 
     for ind, val in enumerate(sorted(rules, key = lambda tup: (-tup[1]))): #sort rules by confidence
         lhs_rhs, conf = val
-        # lhs, rhs = map(lambda x, y: x,y = i for i in lhs_rhs)
         lhs, rhs = lhs_rhs
         count+=1
+        conf = round(conf,3)
         conf = round(conf,3)
         print(lhs, '->', rhs, ":", conf)
 
@@ -198,7 +181,7 @@ def printRules(rules):
     df = df_rules
     df.to_csv('Rules.csv')
     print("Number of Rules: ", count)
-    df_rules.to_csv('ashara.csv')
+    # df_rules.to_csv('ashara.csv')
 
 
 @timing
@@ -214,67 +197,28 @@ def dataFromFile(fname):
                 val = str(key + 1) + "_" + val
                 recordWithTag.append(val)
         yield recordWithTag
-@timing
-def printMyRules(rules,fname):
-
-    """Function which reads from the file and yields a generator"""
-    my_dict = defaultdict(list)
-    # fname = filepath + 'txn_1.csv'
-
-    file_iter = open(fname)
-    for line in file_iter:
-        line = line.strip().rstrip(',')
-        record = (line.split(','))
-        recordWithTag = []  # new list after tag is added
-        for key, val in enumerate(record):
-            if val != "":
-                val = str(key + 1) + "_" + val
-                recordWithTag.append(val)
-        a = recordWithTag
-
-        my_set = frozenset()
-        for j in rules:
-            b = ()
-            for i in j[0]: #converting list of tuple of list of string
-                b+=i
-            my_set = frozenset(b)
-            my_trans = frozenset(a)
-
-            if my_set.issubset(my_trans):
-                my_dict[my_trans].append(my_set)
-
-
-        # yield recordWithTag
-
-    count = 0
-    for ind, val in enumerate(sorted(rules, key=lambda tup: (-tup[1]))):  # sort rules by confidence
-        lhs_rhs, conf = val
-        lhs, rhs = lhs_rhs
-        count += 1
-        print(lhs, '->', rhs, ":", conf)
-    print("Number of Rules: ", count)
 
 start = datetime.datetime.now()
 print("Started at: ", start)
 
 # filepath = '/Users/aasharashrestha/Documents/PycharmProjects/SeasonalTrends/Seasonality_Project/Paper_5/Project/VersionControl/ModifiedApriori/test.csv'
 #scenario 1
-filepath = "/Users/ashara/Documents/Data/Scenario1_Top10CCS.csv"
+# filepath = "test_data.csv"
+filepath = "/Users/ashara/Documents/Data/Paper5/Scenario1_Top10CCS.csv"
 #scenario 2
 # filepath = "/Users/ashara/Documents/Data/scenario2_fullData.csv"
+
+df = pd.read_csv(filepath)
 df = pd.read_csv(filepath)
 print("Total Number of Records: ", len(df))
+# 152888
+print(df.head())
 print(df.nunique())
 
-
-# inFile = dataFromFile(filepath)
-
 inFile = dataFromFile(filepath)
-# infile
-items, rules = runApriori(inFile, 0.01, 0)
+items, rules = runApriori(inFile, 0, 0)
 
 printRules(rules)
-# printMyRules(rules, 'txn_1.csv')
 
 df = pd.DataFrame(methodTimeLog.items(), columns=["Method", "Time Taken"])
 print(df)
